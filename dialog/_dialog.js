@@ -51,9 +51,7 @@ _proto.open = function(content){
     }
 
     if (opt.preventScroll) {
-        _body.css({
-            overflow: "hidden"
-        })
+        _body.css({ overflow: "hidden" })
     }
    
     this.hooks.beforeOpen.call(this);
@@ -70,9 +68,7 @@ _proto.close = function(){
     this.context.hide();
     this.hooks.afterClose.call(this);
     if (opt.preventScroll) {
-        _body.css({
-            overflow: ""
-        })
+        _body.css({ overflow: overflow })
     }
 }
 
