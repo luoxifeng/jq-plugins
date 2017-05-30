@@ -2,6 +2,7 @@
  * 弹窗组件
  */
 var _body = $("body");
+var overflow = _body.css("overflow");
 function Dialog(opt = {}){
     let defaults = {
         id: "Dialog",
@@ -50,7 +51,7 @@ _proto.open = function(content){
     }
 
     if (opt.preventScroll) {
-        $("body").css({
+        _body.css({
             overflow: "hidden"
         })
     }
@@ -69,7 +70,7 @@ _proto.close = function(){
     this.context.hide();
     this.hooks.afterClose.call(this);
     if (opt.preventScroll) {
-        $("body").css({
+        _body.css({
             overflow: ""
         })
     }
