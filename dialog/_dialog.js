@@ -16,7 +16,7 @@ function Dialog(opt = {}){
         beforeClose: function(){},
         afterClose: function(){},
     }
-    opt = Object.assign(defaults, opt);
+    opt = $.extend({}, defaults, opt || {});
 
     /**
      * 钩子
@@ -33,35 +33,45 @@ function Dialog(opt = {}){
     bindEvent.call(this, opt);
 }
 
-Dialog.prototype = {
-    constructor: Dialog,
+/**
+ * 原型
+ */
+var _proto = Dialog.prototype;
+_proto.constructor = Dialog;
 
-    /**
-     * 打开弹窗
-     * @param {*} content 替换提示内容，若不传使用原来的
-     */
-    open(content){
-        if(content &&　content !== this.context.find("[class*=content]")) 
-            this.changeContent(content);
-        $("body").css({
-            overflow: "hidden"
-        })
-        this.hooks.beforeOpen.call(this);
-        
-        this.context.show();
-        this.hooks.afterOpen.call(this);
-    },
-    close: function(){
-        this.hooks.beforeClose.call(this);
-        this.context.hide();
-        this.hooks.afterClose.call(this);
-        $("body").css({
-            overflow: ""
-        })
-    },
-    changeContent: function(content){
-        this.context.find("[class*=content]").html(content);
-    }
+/**
+ * 打开弹窗
+ * @param {*} content 替换提示内容，若不传使用原来的
+ */
+_proto.open = function(content){
+    if(content &&　content !== this.context.find("[class*=content]")) 
+        this.changeContent(content);
+    $("body").css({
+        overflow: "hidden"
+    })
+    this.hooks.beforeOpen.call(this);
+    
+    this.context.show();
+    this.hooks.afterOpen.call(this);
+}
+
+/**
+ * 关闭弹窗
+ */
+_proto.close = function(){
+    this.hooks.beforeClose.call(this);
+    this.context.hide();
+    this.hooks.afterClose.call(this);
+    $("body").css({
+        overflow: ""
+    })
+}
+
+/**
+ * 改变提示内容
+ */
+_proto.changeContent = function(content){
+    this.context.find("[class*=content]").html(content);
 }
 
 function render(opt){
