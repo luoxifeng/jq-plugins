@@ -1,7 +1,7 @@
 /**
  * 弹窗组件
  */
-
+var _body = $("body");
 function Dialog(opt = {}){
     let defaults = {
         id: "Dialog",
@@ -11,6 +11,7 @@ function Dialog(opt = {}){
         content: "这就是提示内容",
         button: '确定',
         maskClose: true,
+        preventScroll: true, //阻止屏幕滚动
         beforeOpen: function(){},
         afterOpen: function(){},
         beforeClose: function(){},
@@ -44,11 +45,16 @@ _proto.constructor = Dialog;
  * @param {*} content 替换提示内容，若不传使用原来的
  */
 _proto.open = function(content){
-    if(content &&　content !== this.context.find("[class*=content]")) 
+    if (content &&　content !== this.context.find("[class*=content]")) {
         this.changeContent(content);
-    $("body").css({
-        overflow: "hidden"
-    })
+    }
+
+    if (opt.preventScroll) {
+        $("body").css({
+            overflow: "hidden"
+        })
+    }
+   
     this.hooks.beforeOpen.call(this);
     
     this.context.show();
@@ -62,9 +68,11 @@ _proto.close = function(){
     this.hooks.beforeClose.call(this);
     this.context.hide();
     this.hooks.afterClose.call(this);
-    $("body").css({
-        overflow: ""
-    })
+    if (opt.preventScroll) {
+        $("body").css({
+            overflow: ""
+        })
+    }
 }
 
 /**
