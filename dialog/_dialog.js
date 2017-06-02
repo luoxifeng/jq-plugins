@@ -45,7 +45,7 @@ _proto.constructor = Dialog;
  * @param {*} content 替换提示内容，若不传使用原来的
  */
 _proto.open = function(content){
-    $('data-role="dialog"').hide();
+    $('[data-role="dialog"]').hide();
     if (content &&　content !== this.context.find("[class*=content]")) {
         this.changeContent(content);
     }
