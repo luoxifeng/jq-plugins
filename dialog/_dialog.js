@@ -5,7 +5,6 @@ var _body = $("body");
 var overflow = _body.css("overflow");
 function Dialog(opt = {}){
     let defaults = {
-        id: "Dialog",
         class: "J-Dialog",
         preCls: "dialog",
         title: '温馨提示',
@@ -46,6 +45,7 @@ _proto.constructor = Dialog;
  * @param {*} content 替换提示内容，若不传使用原来的
  */
 _proto.open = function(content){
+    $('data-role="dialog"').hide();
     if (content &&　content !== this.context.find("[class*=content]")) {
         this.changeContent(content);
     }
@@ -82,7 +82,7 @@ _proto.changeContent = function(content){
 function render(opt){
     var pre = opt.preCls;
     let html = ''
-    +   '<div class="' + (pre + '-wrapper ' + opt.class) + '" id="' + opt.id + '">'
+    +   '<div data-role="dialog" class="' + (pre + '-wrapper ' + opt.class) + '" id="' + opt.id + '">'
     +       '<div class="' + (pre + '-inner') + '">'
     +           '<div class="' + (pre + '-header') + '">' + opt.title + '</div>'
     +           '<div class="' + (pre + '-content') + '">' + opt.content + '</div>'
