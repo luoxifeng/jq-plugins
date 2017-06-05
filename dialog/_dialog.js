@@ -50,7 +50,7 @@ _proto.open = function(content){
         this.changeContent(content);
     }
 
-    if (opt.preventScroll) {
+    if (this.context.data("options").preventScroll) {
         _body.css({ overflow: "hidden" })
     }
    
@@ -67,7 +67,7 @@ _proto.close = function(){
     this.hooks.beforeClose.call(this);
     this.context.hide();
     this.hooks.afterClose.call(this);
-    if (opt.preventScroll) {
+    if (this.context.data("options").preventScroll) {
         _body.css({ overflow: overflow })
     }
 }
@@ -93,7 +93,7 @@ function render(opt){
     +           '</div>'
     +       '</div>'       
     +   '</div>';
-    this.context = $(html).appendTo("body");
+    this.context = $(html).appendTo("body").data("options", opt);
 }
 
 function bindEvent(opt){
