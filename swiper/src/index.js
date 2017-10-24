@@ -69,6 +69,7 @@
         items: [],
         timer: null,
         animating: false,
+        direction: "right",
         init: function () {
             this.render();
             if (this.$opts.autoplay) this.autoplay();
@@ -134,7 +135,17 @@
             var self = this;
             function loop() {
                 self.timer = setTimeout(function () {
-                    self.sliderNext();
+                    if (self.even && self.items.length < 4) {
+                        if (self.direction == "right") {
+                            self.sliderNext();
+                            self.direction = "left";
+                        } else {
+                            self.sliderPrev();
+                            self.direction = "right";
+                        }
+                    } else {
+                        self.sliderNext();
+                    }
                     loop();
                 }, self.$opts.interval)
             }
@@ -153,6 +164,7 @@
                 }
             }
             self.setCssText();
+            self.direction = "left";
         },
         sliderPrev: function () {
             var self = this;
@@ -160,6 +172,7 @@
             self.animating = true;
             self.items.unshift(self.items.pop());
             if (self.even) {//偶数
+                if (self.items.length < 4) self.items.unshift(self.items.pop());
                 var index = self.items.findIndex(function(t){ return t === null});
                 if (index != self.middle + 1) {
                     self.items.splice(index, 1);
@@ -167,6 +180,7 @@
                 }
             }
             self.setCssText();
+            self.direction = "right";
         },
         pause: function () {
             clearTimeout(this.timer);
@@ -208,9 +222,13 @@
 
             self._ctx.addEventListener("touchend", function(e){
                 offset = e.changedTouches[0].pageX - x;
-                if (Math.abs(offset) < 50) return;
-                offset < 0 ? self.sliderNext() : self.sliderPrev();
                 if (self.$opts.autoplay) self.autoplay();
+                if (Math.abs(offset) < 50) return;
+                if (offset < 0) {
+                    self.sliderNext();
+                } else {
+                    self.sliderPrev();
+                }
             });
         }
     };
