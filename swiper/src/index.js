@@ -72,7 +72,7 @@
         init: function () {
             this.render();
             if (this.$opts.autoplay) this.autoplay();
-            this.initEvent();
+            this.initEvents();
         },
 
         render: function () {
@@ -121,7 +121,6 @@
                 css += "visibility: visible;";
                 cssArr.push(css);
             }
-            console.log(cssArr)
             this.css = cssArr;
         },
         setCssText: function (css) {
@@ -172,28 +171,47 @@
         pause: function () {
             clearTimeout(this.timer);
         },
-        initEvent: function () {
+        initEvents: function () {
             var self = this;
-            self._ctx.addEventListener("mouseenter", function (e) {
+            var ctx = self._ctx;
+            self.touchEvents();
+            ctx.addEventListener("mouseenter", function (e) {
                 self.pause();
             });
 
-            self._ctx.addEventListener("mouseleave", function (e) {
+            ctx.addEventListener("mouseleave", function (e) {
                 if (self.$opts.autoplay) self.autoplay();
             });
 
-            self._ctx.addEventListener("click", Util.debounce(function (e) {
+            ctx.addEventListener("click", Util.debounce(function (e) {
                 if (e.target.dataset.btn === "prev") {
                     self.sliderNext();
                 } else if (e.target.dataset.btn === "next") {
                     self.sliderPrev();
                 }
-            }, 300));
+            }, 200));
 
             self.items[0].addEventListener("webkitTransitionEnd", function () {
                 self.animating = false;
             })
 
+        },
+        touchEvents: function(){
+            var self = this;
+            var x, offset;
+
+            if (!self.$opts.touch) return;
+            self._ctx.addEventListener("touchstart", function(e){
+                x = e.changedTouches[0].pageX;
+                self.pause();
+            });
+
+            self._ctx.addEventListener("touchend", function(e){
+                offset = e.changedTouches[0].pageX - x;
+                if (Math.abs(offset) < 50) return;
+                offset < 0 ? self.sliderNext() : self.sliderPrev();
+                if (self.$opts.autoplay) self.autoplay();
+            });
         }
     };
 
