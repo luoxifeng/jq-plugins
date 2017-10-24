@@ -11,22 +11,22 @@
     } else if (typeof exports === 'object') {// Node, CommonJS之类的
         module.exports = factory();
     } else {// 浏览器全局变量(root 即 window)
-        root.CarouselSlider = factory();
+        root.SwiperSlider = factory();
     }
 }(this, function () {
     var _doc = document,
         defaults = {
             selector: "",
             imgs: [],
-            content: [60, 80],
             autoplay: false,
             interval: 3000,
             touch: true,
             scale: 0.13,
+            button: true,
             clickCb: function () { }
         };
 
-    function CarouselSlider(options) {
+    function SwiperSlider(options) {
         this.$opts = Object.assign({}, defaults, options);
         if (!this.$opts.selector) throw new Error("the options require a setting 'selector'");
         if (!this.$opts.imgs.length) throw new Error("the length of imgs must be >= 1");
@@ -43,11 +43,19 @@
             slider.autoplay();
         }
 
+        this.pause = function () {
+            slider.pause();
+        }
+
         this.autoplay = function () {
             this.$opts.autoplay = true;
             slider.autoplay();
         }
     }
+
+    SwiperSlider.prototype = {
+        constrructor: SwiperSlider,
+    };
 
     function Slider(other) {
         Object.assign(this, other)
@@ -60,6 +68,7 @@
         css: [],
         items: [],
         timer: null,
+        animating: false,
         init: function () {
             this.render();
             if (this.$opts.autoplay) this.autoplay();
@@ -70,12 +79,17 @@
             var opts = this.$opts;
             var imgs = opts.imgs;
             var length = opts.imgs.length;
-            var ulStyle = "width: 100%;height: 100%;transform-style: preserve-3d;";
-            var html = "<ul style='" + ulStyle + "'>";
+            var html = "<div class='swiper-slider'><ul class='swiper-slider-list'>";
             for (var i = 0; i < length; i++) {
-                html += "<li><img src='" + imgs[i] + "'></li>";
+                html += "<li class='swiper-slider-item'>";
+                html += "<img class='swiper-slider-img' src='" + imgs[i] + "'></li>";
             }
             html += "</ul>";
+            if (opts.button) {
+                html += "<a class='swiper-slider-btn swiper-slider-btn-prev J-SwiperSliderBtn' data-btn='prev'>&lt;</a>";
+                html += "<a class='swiper-slider-btn swiper-slider-btn-next J-SwiperSliderBtn' data-btn='next'>&gt;</a>";
+            }
+            html += "</div>";
             this._ctx.innerHTML = html;
             this.getCssText();
             this.setCssText();
@@ -121,45 +135,67 @@
             var self = this;
             function loop() {
                 self.timer = setTimeout(function () {
-                    self.items.push(self.items.shift());
-                    if (self.even) {//偶数
-                        var index = self.items.findIndex(function(t){ return t === null});
-                        if (index != self.middle) {
-                            self.items.splice(index, 1);
-                            self.items.splice(self.middle, 0 , null);
-                        }
-                    }
-                    self.setCssText();
+                    self.sliderNext();
                     loop();
                 }, self.$opts.interval)
             }
             loop();
         },
+        sliderNext: function () {
+            var self = this;
+            if (self.animating) return;
+            self.animating = true;
+            self.items.push(self.items.shift());
+            if (self.even) {//偶数
+                var index = self.items.findIndex(function (t) { return t === null });
+                if (index != self.middle) {
+                    self.items.splice(index, 1);
+                    self.items.splice(self.middle, 0, null);
+                }
+            }
+            self.setCssText();
+        },
+        sliderPrev: function () {
+            var self = this;
+            if (self.animating) return;
+            self.animating = true;
+            self.items.unshift(self.items.pop());
+            if (self.even) {//偶数
+                var index = self.items.findIndex(function(t){ return t === null});
+                if (index != self.middle + 1) {
+                    self.items.splice(index, 1);
+                    self.items.splice(self.middle + 1, 0 , null);
+                }
+            }
+            self.setCssText();
+        },
+        pause: function () {
+            clearTimeout(this.timer);
+        },
         initEvent: function () {
             var self = this;
-            this._ctx.addEventListener("mouseenter", function (e) {
-                clearTimeout(self.timer);
+            self._ctx.addEventListener("mouseenter", function (e) {
+                self.pause();
             });
 
-            this._ctx.addEventListener("mouseleave", function (e) {
+            self._ctx.addEventListener("mouseleave", function (e) {
                 if (self.$opts.autoplay) self.autoplay();
             });
+
+            self._ctx.addEventListener("click", Util.debounce(function (e) {
+                if (e.target.dataset.btn === "prev") {
+                    self.sliderNext();
+                } else if (e.target.dataset.btn === "next") {
+                    self.sliderPrev();
+                }
+            }, 300));
+
+            self.items[0].addEventListener("webkitTransitionEnd", function () {
+                self.animating = false;
+            })
+
         }
-    }
-
-
-
-
-    CarouselSlider.prototype = {
-        constrructor: CarouselSlider,
-
-
-
-
-
-
     };
-
 
 
 
@@ -204,49 +240,36 @@
             }
         },
         findIndexPolyfill: function () {
-            // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
             if (!Array.prototype.findIndex) {
                 Object.defineProperty(Array.prototype, 'findIndex', {
                     value: function (predicate) {
-                        // 1. Let O be ? ToObject(this value).
                         if (this == null) {
                             throw new TypeError('"this" is null or not defined');
                         }
-
                         var o = Object(this);
-
-                        // 2. Let len be ? ToLength(? Get(O, "length")).
                         var len = o.length >>> 0;
-
-                        // 3. If IsCallable(predicate) is false, throw a TypeError exception.
                         if (typeof predicate !== 'function') {
                             throw new TypeError('predicate must be a function');
                         }
-
-                        // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
                         var thisArg = arguments[1];
-
-                        // 5. Let k be 0.
                         var k = 0;
-
-                        // 6. Repeat, while k < len
                         while (k < len) {
-                            // a. Let Pk be ! ToString(k).
-                            // b. Let kValue be ? Get(O, Pk).
-                            // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-                            // d. If testResult is true, return k.
                             var kValue = o[k];
                             if (predicate.call(thisArg, kValue, k, o)) {
                                 return k;
                             }
-                            // e. Increase k by 1.
                             k++;
                         }
-
-                        // 7. Return -1.
                         return -1;
                     }
                 });
+            }
+        },
+        debounce: function (fn, time) {
+            var timer;
+            return function (e) {
+                clearTimeout(timer)
+                timer = setTimeout(fn.bind(this, e), time);
             }
         }
     };
@@ -262,11 +285,7 @@
 
 
 
-
-
-
-
-    return CarouselSlider;
+    return SwiperSlider;
 }));
 
 

@@ -1,0 +1,74 @@
+
+
+/**
+** style
+*/
+
+.swiper-slider {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.swiper-slider-list {
+    height: 100%;
+    width: 100%;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.swiper-slider-item {
+    list-style: none;
+    height: 100%;
+    width: 380px;
+    overflow: hidden;
+    display: inline-block;
+    position: absolute;
+    margin-left: -190px;
+    left: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px;
+}
+
+.swiper-slider-img {
+    height: 100%;
+    width: 100%;
+}
+
+.swiper-slider-btn {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    font-size: 50px;
+    width: 50px;
+    height: 80px;
+    text-align: left;
+    margin-top: -43px;
+    padding-top: 6px;
+    vertical-align: baseline;
+    background: rgba(45, 40, 40, 0.73);
+    color: rgba(255, 255, 255, 0.97);
+    cursor: pointer;
+    transform: translate3d(0, 0px, 200px) 
+}
+
+.swiper-slider-btn-next {
+    right: 0;
+    text-align: right;
+}
+
+.swiper-slider-list:hover + .swiper-slider-btn {
+    display: block;
+}
+
+.swiper-slider:hover .swiper-slider-btn {
+    display: block;
+}
+
+.swiper-slider-btn:hover {
+    display: block;
+}
