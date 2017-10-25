@@ -9,7 +9,6 @@
     <style>
         .wrapper {
             margin: 0 auto;
-            /* background: #eee; */
             height: 400px;
             width: 1200px;
         }
@@ -18,24 +17,22 @@
 </head>
 
 <body>
-    <div id="dd" class="wrapper">
+    <div id="slider" class="wrapper">
 
     </div>
     <script src="../src/index.js"></script>
     <script>
+        var imgs = ["./imgs/01.jpg", "./imgs/02.jpg", "./imgs/03.jpg", "./imgs/04.jpg", "./imgs/05.jpg"];
         var slider  =  new SwiperSlider({
-            selector: "#dd",
-            imgs: ["./imgs/01.jpg", "./imgs/02.jpg", "./imgs/03.jpg", "./imgs/04.jpg"],
-            autoplay: false,
+            selector: "#slider",
+            imgs: imgs,
+            autoplay: true,
             interval: 2000,
             scale: 0.1,
             touch: true
-        })
-        slider.autoplay();
-
-        setTimeout(()=> {
-            // slider.pause();
-        }, 2000)
+        });
+        
+        
     </script>
 </body>
 
