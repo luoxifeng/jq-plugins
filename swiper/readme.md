@@ -14,9 +14,9 @@
 2. 移动端
 
     1. 正常情况 （奇数个）
-        ![2个图片](./imgs/mobile_odd.gif)
+        ![](./imgs/mobile_odd.gif)
     2. 非对称  （偶数个）
-        ![](./imgs/mobile_even_2.gif)
+        ![2个图片](./imgs/mobile_even_2.gif)
         ![4个图片](./imgs/mobile_even_4.gif)
     > 非对称优化,和pc端一样原理
 
